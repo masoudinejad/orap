@@ -1,4 +1,5 @@
 from sklearn.tree import DecisionTreeClassifier
+from copy import deepcopy
 
 
 class ORAPClassifier(DecisionTreeClassifier):
@@ -43,3 +44,31 @@ class ORAPClassifier(DecisionTreeClassifier):
             )
             parent_count[i] = parent_count[parent] + 1
         self.depths = parent_count
+
+    def _prune(self, node_id: int) -> None:
+
+        # Make a copy of the tree
+        tree_copy = deepcopy(self.tree_)
+
+        # Check if the node_id is valid
+        if node_id >= tree_copy.node_count or node_id < 0:
+            raise ValueError("Invalid node_id")
+
+        # Recursively remove children
+        def _remove(node):
+            if node == -1:
+                return
+            left_child = tree_copy.children_left[node]
+            right_child = tree_copy.children_right[node]
+            tree_copy.children_left[node] = -1
+            tree_copy.children_right[node] = -1
+            _remove(left_child)
+            _remove(right_child)
+
+        _remove(tree_copy.children_left[node_id])
+        _remove(tree_copy.children_right[node_id])
+        tree_copy.children_left[node_id] = -1
+        tree_copy.children_right[node_id] = -1
+
+        # Replace the original tree with the modified copy
+        return tree_copy
