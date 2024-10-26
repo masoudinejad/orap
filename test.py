@@ -1,5 +1,6 @@
 from sklearn.datasets import load_iris
-from sklearn.tree import DecisionTreeClassifier
+# from sklearn.tree import DecisionTreeClassifier
+from orap_dt import ORAPClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
@@ -12,7 +13,7 @@ y = iris.target
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
 # Create a Decision Tree classifier
-clf = DecisionTreeClassifier()
+clf = ORAPClassifier()
 
 # Train the classifier
 clf.fit(X_train, y_train)
